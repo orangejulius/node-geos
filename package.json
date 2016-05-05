@@ -45,6 +45,7 @@
   "main": "./lib",
   "dependencies": {
     "coffee-script": "*",
+    "nan": "^2.3.3",
     "node-gyp": ">=0.12.1"
   },
   "devDependencies": {
