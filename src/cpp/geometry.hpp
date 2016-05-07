@@ -61,6 +61,7 @@
         } else {                                                                        \
             try {                                                                       \
                 args.GetReturnValue().Set(geom->_geom->geosmethod() ? True(isolate) : False(isolate));      \
+                return; \
             } catch(geos::util::GEOSException exception) {                              \
                 isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, exception.what()))); \
             }                                                                           \
@@ -127,6 +128,7 @@
             try {                                                                       \
                 args.GetReturnValue().Set(                                              \
                   geom->_geom->geosmethod(geom2->_geom) ? True(isolate) : False(isolate));            \
+                return; \
             } catch(geos::util::GEOSException exception) {                              \
                 isolate->ThrowException(                                                \
                   Exception::Error(String::NewFromUtf8(isolate, exception.what()))      \
