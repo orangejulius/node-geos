@@ -19,7 +19,6 @@ void Geometry::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "Geometry"));
 
-    constructor.Reset(isolate, tpl->GetFunction());
 
     NODE_SET_PROTOTYPE_METHOD(tpl, "toString", Geometry::ToString);
     //GEOS unary predicates
@@ -65,6 +64,8 @@ void Geometry::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "getGeometryType", Geometry::GetGeometryType);
 
     NODE_SET_PROTOTYPE_METHOD(tpl, "toJSON", Geometry::ToJSON);
+
+    constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "Geometry"), tpl->GetFunction());
 }

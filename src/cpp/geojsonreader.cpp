@@ -27,9 +27,9 @@ void GeoJSONReader::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "GeoJSONReader"));
 
-    constructor.Reset(isolate, tpl->GetFunction());
-
     NODE_SET_PROTOTYPE_METHOD(tpl, "read", GeoJSONReader::Read);
+
+    constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "GeoJSONReader"), tpl->GetFunction());
 }

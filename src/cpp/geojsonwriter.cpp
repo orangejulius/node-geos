@@ -11,12 +11,12 @@ void GeoJSONWriter::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "GeoJSONWriter"));
 
-    constructor.Reset(isolate, tpl->GetFunction());
-
     NODE_SET_PROTOTYPE_METHOD(tpl, "write", GeoJSONWriter::Write);
     NODE_SET_PROTOTYPE_METHOD(tpl, "writeBbox", GeoJSONWriter::WriteBbox);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setRoundingPrecision", GeoJSONWriter::SetRoundingPrecision);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setBbox", GeoJSONWriter::SetBbox);
+
+    constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "GeoJSONWriter"), tpl->GetFunction());
 }

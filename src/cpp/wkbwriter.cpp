@@ -16,9 +16,9 @@ void WKBWriter::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "WKBWriter"));
 
-    constructor.Reset(isolate, tpl->GetFunction());
-
     NODE_SET_PROTOTYPE_METHOD(tpl, "writeHEX", WKBWriter::WriteHEX);
+
+    constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "WKBWriter"), tpl->GetFunction());
 }

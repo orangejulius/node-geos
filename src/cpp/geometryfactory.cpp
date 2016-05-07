@@ -24,11 +24,11 @@ void GeometryFactory::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "GeometryFactory"));
 
-    constructor.Reset(isolate, tpl->GetFunction());
-
     NODE_SET_PROTOTYPE_METHOD(tpl, "getPrecisionModel", GetPrecisionModel);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getSRID", GetSRID);
     NODE_SET_PROTOTYPE_METHOD(tpl, "destroy", Destroy);
+
+    constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "GeometryFactory"), tpl->GetFunction());
 }

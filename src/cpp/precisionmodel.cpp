@@ -27,8 +27,6 @@ void PrecisionModel::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "PrecisionModel"));
 
-    constructor.Reset(isolate, tpl->GetFunction());
-
     NODE_SET_PROTOTYPE_METHOD(tpl, "getType", GetType);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getScale", GetScale);
     NODE_SET_PROTOTYPE_METHOD(tpl, "getOffsetX", GetOffsetX);
@@ -39,6 +37,8 @@ void PrecisionModel::Initialize(Handle<Object> target) {
     NODE_SET_PROTOTYPE_METHOD(tpl, "isFloating", IsFloating);
 
     NODE_SET_PROTOTYPE_METHOD(tpl, "compareTo", CompareTo);
+
+    constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "PrecisionModel"), tpl->GetFunction());
 }

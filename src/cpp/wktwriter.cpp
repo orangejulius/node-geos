@@ -17,11 +17,11 @@ void WKTWriter::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "WKTWriter"));
 
-    constructor.Reset(isolate, tpl->GetFunction());
-
     NODE_SET_PROTOTYPE_METHOD(tpl, "write", WKTWriter::Write);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setRoundingPrecision", WKTWriter::SetRoundingPrecision);
     NODE_SET_PROTOTYPE_METHOD(tpl, "setTrim", WKTWriter::SetTrim);
+
+    constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "WKTWriter"), tpl->GetFunction());
 }
