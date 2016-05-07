@@ -21,6 +21,7 @@
                                                                                         \
     void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
         Isolate* isolate = Isolate::GetCurrent();                                       \
+        HandleScope scope(isolate);                                                     \
                                                                                         \
         assert(status == 0);                                                            \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
@@ -46,6 +47,7 @@
     void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args)                   \
     {                                                                                   \
         Isolate* isolate = Isolate::GetCurrent();                                       \
+        HandleScope scope(isolate);                                                     \
                                                                                         \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());                     \
         if (args.Length() == 1) {                                                       \
@@ -85,6 +87,7 @@
                                                                                         \
     void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
         Isolate* isolate = Isolate::GetCurrent();                                       \
+        HandleScope scope(isolate);                                                     \
                                                                                         \
         assert(status == 0);                                                            \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
