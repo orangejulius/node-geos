@@ -41,7 +41,6 @@ double GeoJSONWriter::roundNumber(double coord) {
 
 Handle<Array> GeoJSONWriter::coordinateToArray(const geos::geom::Coordinate* coord) {
     Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
 
     Handle<Array> array = Array::New(isolate);
     array->Set(0, Number::New(isolate, roundNumber(coord->x)));
@@ -54,7 +53,6 @@ Handle<Array> GeoJSONWriter::coordinateToArray(const geos::geom::Coordinate* coo
 
 Handle<Array> GeoJSONWriter::coordinateSequenceToArray(const geos::geom::CoordinateSequence* seq) {
     Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
 
     int size = seq->getSize();
     Handle<Array> array = Array::New(isolate, size);
@@ -67,7 +65,6 @@ Handle<Array> GeoJSONWriter::coordinateSequenceToArray(const geos::geom::Coordin
 
 Handle<Array> GeoJSONWriter::geometryCollectionToArrayOfArrays(const geos::geom::GeometryCollection* geom) {
     Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
 
     int size = geom->getNumGeometries();
     Handle<Array> array = Array::New(isolate, size);
@@ -80,7 +77,6 @@ Handle<Array> GeoJSONWriter::geometryCollectionToArrayOfArrays(const geos::geom:
 
 Handle<Array> GeoJSONWriter::geometryCollectionToArrayOfObjects(const geos::geom::GeometryCollection* geom) {
     Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
 
     int size = geom->getNumGeometries();
     Handle<Array> array = Array::New(isolate, size);
@@ -108,7 +104,6 @@ Handle<Value> GeoJSONWriter::getCoordsOrGeom(const geos::geom::Geometry* geom) {
         const geos::geom::Polygon* g = dynamic_cast< const geos::geom::Polygon* >(geom);
 
         Isolate* isolate = Isolate::GetCurrent();
-        HandleScope scope(isolate);
 
         int rings = g->getNumInteriorRing() + 1;
 
@@ -154,7 +149,6 @@ Handle<Value> GeoJSONWriter::getCoordsOrGeom(const geos::geom::Geometry* geom) {
 
 Handle<Value> GeoJSONWriter::writeBbox(const geos::geom::Geometry* geom) {
     Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
 
     if (geom->isEmpty()) {
         return Null(isolate);
@@ -219,7 +213,6 @@ void GeoJSONWriter::WriteBbox(const FunctionCallbackInfo<Value>& args) {
 
 Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
     Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
 
     Handle<Object> object = Object::New(isolate);
 

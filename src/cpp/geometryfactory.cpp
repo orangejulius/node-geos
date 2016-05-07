@@ -34,9 +34,6 @@ void GeometryFactory::Initialize(Handle<Object> target) {
 }
 
 void GeometryFactory::New(const FunctionCallbackInfo<Value>& args) {
-    Isolate* isolate = Isolate::GetCurrent();
-    HandleScope scope(isolate);
-
     GeometryFactory* factory;
     if (args.Length() == 0) {
         factory = new GeometryFactory();
