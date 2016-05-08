@@ -9,6 +9,7 @@
         "src/cpp/wkbreader.cpp",
         "src/cpp/wktwriter.cpp",
         "src/cpp/wkbwriter.cpp",
+        "src/cpp/strtree.cpp",
         "src/cpp/geometryfactory.cpp",
         "src/cpp/precisionmodel.cpp",
         "src/cpp/geojsonwriter.cpp",

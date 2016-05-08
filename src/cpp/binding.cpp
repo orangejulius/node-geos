@@ -4,6 +4,7 @@
 #include "wktwriter.hpp"
 #include "wkbwriter.hpp"
 #include "geometry.hpp"
+#include "strtree.hpp"
 #include "geometryfactory.hpp"
 #include "precisionmodel.hpp"
 #include "geojsonwriter.hpp"
@@ -22,6 +23,7 @@ extern "C" {
         WKBReader::Initialize(target);
         WKTWriter::Initialize(target);
         WKBWriter::Initialize(target);
+        STRtree::Initialize(target);
         GeometryFactory::Initialize(target);
         PrecisionModel::Initialize(target);
         GeoJSONWriter::Initialize(target);
