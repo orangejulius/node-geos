@@ -208,7 +208,7 @@ void GeoJSONWriter::Write(const FunctionCallbackInfo<Value>& args) {
 
 void GeoJSONWriter::WriteBbox(const FunctionCallbackInfo<Value>& args) {
     GeoJSONWriter* writer = ObjectWrap::Unwrap<GeoJSONWriter>(args.This());
-    args.GetReturnValue().Set(writer->write(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom));
+    args.GetReturnValue().Set(writer->writeBbox(ObjectWrap::Unwrap<Geometry>(args[0]->ToObject())->_geom));
 }
 
 Handle<Value> GeoJSONWriter::write(const geos::geom::Geometry* geom) {
