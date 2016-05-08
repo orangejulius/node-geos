@@ -52,7 +52,7 @@
         if (args.Length() == 1) {                                                       \
             geosmethod##_baton_t *closure = new geosmethod##_baton_t();                 \
             closure->geom = geom;                                                       \
-            closure->cb.Reset(isolate, Persistent<Function>(isolate, Local<Function>::Cast(args[0])));\
+            closure->cb.Reset(isolate, Local<Function>::Cast(args[0]));                 \
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
             uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
