@@ -98,6 +98,7 @@
             FatalException(isolate, tryCatch);                                          \
         }                                                                               \
                                                                                         \
+        closure->cb.Reset();                                                            \
         closure->geom->Unref();                                                         \
         closure->geom2->_unref();                                                       \
                                                                                         \
