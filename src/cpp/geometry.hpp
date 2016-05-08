@@ -38,7 +38,6 @@
                                                                                         \
         closure->cb.Reset();                                                            \
         closure->geom->Unref();                                                         \
-        uv_unref((uv_handle_t*) req);                                                   \
                                                                                         \
         delete closure;                                                                 \
         delete req;                                                                     \
@@ -57,7 +56,6 @@
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
             uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
-            uv_ref((uv_handle_t*) &req);                                                \
             geom->Ref();                                                                \
             args.GetReturnValue().Set(Undefined(isolate));                              \
         } else {                                                                        \
@@ -102,7 +100,6 @@
                                                                                         \
         closure->geom->Unref();                                                         \
         closure->geom2->_unref();                                                       \
-        uv_unref((uv_handle_t*) &req);                                                  \
                                                                                         \
         delete closure;                                                                 \
         delete req;                                                                     \
@@ -123,7 +120,6 @@
             uv_work_t *req = new uv_work_t;                                             \
             req->data = closure;                                                        \
             uv_queue_work(uv_default_loop(), req, EIO_##cppmethod, EIO_After##cppmethod);\
-            uv_ref((uv_handle_t*) &req);                                                \
             geom->Ref();                                                                \
             geom2->_ref();                                                              \
             args.GetReturnValue().Set(Undefined(isolate));                              \
