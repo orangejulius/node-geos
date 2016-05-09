@@ -7,9 +7,8 @@
 
 class STRtree : public ObjectWrap {
  public:
-    geos::index::strtree::STRtree *_strtree;
+    geos::index::strtree::STRtree _strtree;
     STRtree();
-    STRtree(geos::index::strtree::STRtree *strtree);
     ~STRtree();
     static void Initialize(Handle<Object> target);
 

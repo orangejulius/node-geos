@@ -1,12 +1,10 @@
 #include "strtree.hpp"
 
-STRtree::STRtree() {}
-
-STRtree::STRtree(geos::index::strtree::STRtree *strtree) : ObjectWrap() {
-    _strtree = strtree;
+STRtree::STRtree() {
 }
 
-STRtree::~STRtree() {}
+STRtree::~STRtree() {
+}
 
 Persistent<Function> STRtree::constructor;
 
