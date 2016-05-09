@@ -19,4 +19,8 @@ tests = (vows.describe "STRtree").addBatch
     "a new instance should be an instance of STRtree": (tree) ->
       assert.instanceOf tree, STRtree
 
+    "should have a insert function": (tree) ->
+      assert.isFunction tree.insert
+      assert.isUndefined tree.insert geom
+
 tests.export module

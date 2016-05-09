@@ -1,5 +1,7 @@
 #include "strtree.hpp"
 
+#include "geometry.hpp"
+
 STRtree::STRtree() {
 }
 
@@ -17,6 +19,8 @@ void STRtree::Initialize(Handle<Object> target) {
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     tpl->SetClassName(String::NewFromUtf8(isolate, "STRtree"));
 
+    NODE_SET_PROTOTYPE_METHOD(tpl, "insert", Insert);
+
     constructor.Reset(isolate, tpl->GetFunction());
 
     target->Set(String::NewFromUtf8(isolate, "STRtree"), tpl->GetFunction());
@@ -30,4 +34,15 @@ void STRtree::New(const FunctionCallbackInfo<Value>& args) {
     strtree = new STRtree();
     strtree->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
+}
+
+void STRtree::Insert(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+
+    STRtree *strtree = ObjectWrap::Unwrap<STRtree>(args.This());
+    Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+
+    strtree->_strtree.insert(geom->_geom->getEnvelopeInternal(), NULL);
+
+    args.GetReturnValue().Set(Undefined(isolate));
 }

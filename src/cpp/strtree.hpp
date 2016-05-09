@@ -12,6 +12,8 @@ class STRtree : public ObjectWrap {
     ~STRtree();
     static void Initialize(Handle<Object> target);
 
+    static void Insert(const FunctionCallbackInfo<Value>& args);
+
  protected:
     static void New(const FunctionCallbackInfo<Value>& args);
 
