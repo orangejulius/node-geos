@@ -9,6 +9,8 @@
 
 using std::vector;
 
+class Geometry;
+
 class STRtree : public ObjectWrap {
  public:
     geos::index::strtree::STRtree _strtree;
@@ -26,7 +28,7 @@ class STRtree : public ObjectWrap {
 
  private:
     static Persistent<Function> constructor;
-    static Handle<Array> makeQueryResult(vector<void *> geom_query_result);
+    static Handle<Array> makeQueryResult(vector<void *> geom_query_result, const Geometry* query_geom);
 };
 
 #endif

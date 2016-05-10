@@ -68,7 +68,7 @@ void STRtree::QueryAsyncComplete(uv_work_t *req, int status) {
     assert(status == 0);
     query_baton_t *closure = static_cast<query_baton_t *>(req->data);
     Local<Value> argv[2] = {
-        Null(isolate), makeQueryResult(closure->results)
+        Null(isolate), makeQueryResult(closure->results, closure->geom)
     };
     TryCatch tryCatch;
     Local<Function> local_callback = Local<Function>::New(isolate, closure->cb);
@@ -108,7 +108,7 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
         try {
             vector<void *> geom_query_result;
             strtree->_strtree.query(geom->_geom->getEnvelopeInternal(), geom_query_result);
-            Local<Array> result = makeQueryResult(geom_query_result);
+            Local<Array> result = makeQueryResult(geom_query_result, geom);
 
             args.GetReturnValue().Set(result);
             return;
@@ -121,15 +121,18 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
     }
 }
 
-Handle<Array> STRtree::makeQueryResult(vector<void *> geom_query_result) {
+Handle<Array> STRtree::makeQueryResult(vector<void *> geom_query_result, const Geometry* query_geom) {
     Isolate* isolate = Isolate::GetCurrent();
 
     int valid_records = 0;
-    Local<Array> result = Array::New(isolate, geom_query_result.size());
+    Local<Array> result = Array::New(isolate);
     for (vector<void*>::iterator it = geom_query_result.begin(); it != geom_query_result.end(); it++) {
-      Local<Object> geom = Local<Object>::New(isolate, *(Persistent<Object>*)(*it));
-      result->Set(valid_records, geom);
-      valid_records++;
+        Local<Object> geomLocal = Local<Object>::New(isolate, *(Persistent<Object>*)(*it));
+        Geometry *geom = ObjectWrap::Unwrap<Geometry>(geomLocal);
+        if (geom->_geom->intersects(query_geom->_geom)) {
+            result->Set(valid_records, geomLocal);
+            valid_records++;
+        }
     }
 
     return result;
