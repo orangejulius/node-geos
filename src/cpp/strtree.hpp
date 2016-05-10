@@ -31,6 +31,7 @@ class STRtree : public ObjectWrap {
     static void New(const FunctionCallbackInfo<Value>& args);
 
  private:
+    bool built;
     static Persistent<Function> constructor;
     static Handle<Array> makeQueryResult(const STRtree* strtree, vector<void *> geom_query_result, const Geometry* query_geom);
     vector<const PreparedGeometry*> prep_geoms;

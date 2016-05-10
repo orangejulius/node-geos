@@ -38,6 +38,11 @@ tests = (vows.describe "STRtree").addBatch
       tree.query point, (err, results) ->
         assert.deepEqual results, [polygon]
 
+    "throws an error if inserts are attempted after querying": (tree) ->
+      assert.throws( ->
+        tree.insert polygon
+      )
+
     "query does not return geoms that have bbox, but not actual geom, enclosing point": () ->
       tree = new STRtree()
       tree.insert polygon

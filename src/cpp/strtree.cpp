@@ -2,7 +2,7 @@
 
 #include "geometry.hpp"
 
-STRtree::STRtree() {
+STRtree::STRtree() : built(false) {
 }
 
 STRtree::~STRtree() {
@@ -42,6 +42,13 @@ void STRtree::Insert(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = Isolate::GetCurrent();
 
     STRtree *strtree = ObjectWrap::Unwrap<STRtree>(args.This());
+
+    if (strtree->built) {
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Cannot insert after STRtree has been built.")));
+        args.GetReturnValue().Set(Undefined(isolate));
+        return;
+    }
+
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     const PreparedGeometry* prep_geom = PreparedGeometryFactory::prepare(geom->_geom);
 
@@ -112,6 +119,7 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
     STRtree *strtree = ObjectWrap::Unwrap<STRtree>(args.This());
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     Local<Function> f = Local<Function>::Cast(args[1]);
+    strtree->built = true;
     if (args.Length() == 2) {
         query_baton_t *closure = new query_baton_t();
         closure->strtree = strtree;
