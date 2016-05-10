@@ -53,4 +53,29 @@ tests = (vows.describe "STRtree").addBatch
       # point that intersects both bboxes, but only one polygon
       assert.deepEqual tree2.query(point2), [polygon2]
 
+    "build can be called after inserting": () ->
+      tree2 = new STRtree()
+
+      tree2.insert polygon
+
+      tree2.build()
+
+    "build can be called after querying (it is a noop)": () ->
+      tree2 = new STRtree()
+
+      tree2.insert polygon
+      tree2.query(point)
+
+      tree2.build()
+
+    "insert throws after build": () ->
+      tree2 = new STRtree()
+
+      tree2.insert polygon
+
+      tree2.build()
+      assert.throws( ->
+        tree.insert polygon2
+      )
+
 tests.export module

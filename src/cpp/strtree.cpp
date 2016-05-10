@@ -20,6 +20,7 @@ void STRtree::Initialize(Handle<Object> target) {
     tpl->SetClassName(String::NewFromUtf8(isolate, "STRtree"));
 
     NODE_SET_PROTOTYPE_METHOD(tpl, "insert", Insert);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "build", Build);
     NODE_SET_PROTOTYPE_METHOD(tpl, "query", Query);
 
     constructor.Reset(isolate, tpl->GetFunction());
@@ -58,6 +59,18 @@ void STRtree::Insert(const FunctionCallbackInfo<Value>& args) {
     int* index = new int(strtree->persistent_objs.size() -1);
 
     strtree->_strtree.insert(geom->_geom->getEnvelopeInternal(), index );
+
+    args.GetReturnValue().Set(Undefined(isolate));
+}
+
+void STRtree::Build(const FunctionCallbackInfo<Value>& args) {
+    Isolate* isolate = Isolate::GetCurrent();
+
+    STRtree *strtree = ObjectWrap::Unwrap<STRtree>(args.This());
+
+    if (!strtree->built) {
+        strtree->_strtree.build();
+    }
 
     args.GetReturnValue().Set(Undefined(isolate));
 }
