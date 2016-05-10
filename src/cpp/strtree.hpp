@@ -13,6 +13,9 @@ class STRtree : public ObjectWrap {
     static void Initialize(Handle<Object> target);
 
     static void Insert(const FunctionCallbackInfo<Value>& args);
+    static void Query(const FunctionCallbackInfo<Value>& args);
+    static void QueryAsyncComplete(uv_work_t *req, int status);
+    static void QueryAsync(uv_work_t *req);
 
  protected:
     static void New(const FunctionCallbackInfo<Value>& args);
