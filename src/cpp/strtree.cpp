@@ -41,10 +41,16 @@ void STRtree::Insert(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = Isolate::GetCurrent();
 
     STRtree *strtree = ObjectWrap::Unwrap<STRtree>(args.This());
-    Persistent<Object>* obj = new Persistent<Object>(isolate, args[0]->ToObject());
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
+    const PreparedGeometry* prep_geom = PreparedGeometryFactory::prepare(geom->_geom);
 
-    strtree->_strtree.insert(geom->_geom->getEnvelopeInternal(), obj);
+    Persistent<Object>* obj = new Persistent<Object>(isolate, args[0]->ToObject());
+    strtree->prep_geoms.push_back(prep_geom);
+    strtree->persistent_objs.push_back(obj);
+
+    int* index = new int(strtree->persistent_objs.size() -1);
+
+    strtree->_strtree.insert(geom->_geom->getEnvelopeInternal(), index );
 
     args.GetReturnValue().Set(Undefined(isolate));
 }
@@ -68,7 +74,7 @@ void STRtree::QueryAsyncComplete(uv_work_t *req, int status) {
     assert(status == 0);
     query_baton_t *closure = static_cast<query_baton_t *>(req->data);
     Local<Value> argv[2] = {
-        Null(isolate), makeQueryResult(closure->results, closure->geom)
+        Null(isolate), makeQueryResult(closure->strtree, closure->results, closure->geom)
     };
     TryCatch tryCatch;
     Local<Function> local_callback = Local<Function>::New(isolate, closure->cb);
@@ -106,9 +112,9 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
         args.GetReturnValue().Set(Undefined(isolate));
     } else {
         try {
-            vector<void *> geom_query_result;
-            strtree->_strtree.query(geom->_geom->getEnvelopeInternal(), geom_query_result);
-            Local<Array> result = makeQueryResult(geom_query_result, geom);
+            vector<void*> indices;
+            strtree->_strtree.query(geom->_geom->getEnvelopeInternal(), indices);
+            Local<Array> result = makeQueryResult(strtree, indices, geom);
 
             args.GetReturnValue().Set(result);
             return;
@@ -121,15 +127,24 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
     }
 }
 
-Handle<Array> STRtree::makeQueryResult(vector<void *> geom_query_result, const Geometry* query_geom) {
+/*
+ * Given a list of result indices, and the geometry that is being queried against the tree,
+ * compute results.
+ *
+ * This includes gathering all the required objects from the individual vectors,
+ * and performing a full intersection test against the query geometry for each result, to ensure it's actually
+ * inside the result. The GEOS STRtree only compares against bounding boxes.
+ */
+Handle<Array> STRtree::makeQueryResult(const STRtree* strtree, vector<void *> geom_query_result_indices, const Geometry* query_geom) {
     Isolate* isolate = Isolate::GetCurrent();
 
     int valid_records = 0;
     Local<Array> result = Array::New(isolate);
-    for (vector<void*>::iterator it = geom_query_result.begin(); it != geom_query_result.end(); it++) {
-        Local<Object> geomLocal = Local<Object>::New(isolate, *(Persistent<Object>*)(*it));
-        Geometry *geom = ObjectWrap::Unwrap<Geometry>(geomLocal);
-        if (geom->_geom->intersects(query_geom->_geom)) {
+    for (vector<void*>::iterator it = geom_query_result_indices.begin(); it != geom_query_result_indices.end(); it++) {
+        int index = *(int *)*it;
+        Local<Object> geomLocal = Local<Object>::New(isolate, *(strtree->persistent_objs[index]));
+        const PreparedGeometry* prep_geom = strtree->prep_geoms[index];
+        if (prep_geom->intersects(query_geom->_geom)) {
             result->Set(valid_records, geomLocal);
             valid_records++;
         }

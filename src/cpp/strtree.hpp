@@ -4,10 +4,13 @@
 #include <vector>
 
 #include <uv.h>
+#include <geos/geom/prep/PreparedGeometryFactory.h>
 #include <geos/index/strtree/STRtree.h>
 #include "binding.hpp"
 
 using std::vector;
+using geos::geom::prep::PreparedGeometry;
+using geos::geom::prep::PreparedGeometryFactory;
 
 class Geometry;
 
@@ -28,7 +31,9 @@ class STRtree : public ObjectWrap {
 
  private:
     static Persistent<Function> constructor;
-    static Handle<Array> makeQueryResult(vector<void *> geom_query_result, const Geometry* query_geom);
+    static Handle<Array> makeQueryResult(const STRtree* strtree, vector<void *> geom_query_result, const Geometry* query_geom);
+    vector<const PreparedGeometry*> prep_geoms;
+    vector<Persistent<Object> *> persistent_objs;
 };
 
 #endif
