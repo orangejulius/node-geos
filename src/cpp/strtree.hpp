@@ -1,9 +1,13 @@
 #ifndef STRTREE_HPP
 #define STRTREE_HPP
 
+#include <vector>
+
 #include <uv.h>
 #include <geos/index/strtree/STRtree.h>
 #include "binding.hpp"
+
+using std::vector;
 
 class STRtree : public ObjectWrap {
  public:
@@ -22,6 +26,7 @@ class STRtree : public ObjectWrap {
 
  private:
     static Persistent<Function> constructor;
+    static Handle<Array> makeQueryResult(vector<void *> geom_query_result);
 };
 
 #endif

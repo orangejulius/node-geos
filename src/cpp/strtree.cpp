@@ -53,7 +53,7 @@ typedef struct {
     STRtree* strtree;
     Geometry* geom;
     Persistent<Function> cb;
-    std::vector<void *> results;
+    vector<void *> results;
 } query_baton_t;
 
 void STRtree::QueryAsync(uv_work_t *req) {
@@ -68,7 +68,7 @@ void STRtree::QueryAsyncComplete(uv_work_t *req, int status) {
     assert(status == 0);
     query_baton_t *closure = static_cast<query_baton_t *>(req->data);
     Local<Value> argv[2] = {
-        Null(isolate), True(isolate)
+        Null(isolate), makeQueryResult(closure->results)
     };
     TryCatch tryCatch;
     Local<Function> local_callback = Local<Function>::New(isolate, closure->cb);
@@ -86,8 +86,7 @@ void STRtree::QueryAsyncComplete(uv_work_t *req, int status) {
     delete closure;
 }
 
-void STRtree::Query(const FunctionCallbackInfo<Value>& args)
-{
+void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     STRtree *strtree = ObjectWrap::Unwrap<STRtree>(args.This());
@@ -107,13 +106,9 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args)
         args.GetReturnValue().Set(Undefined(isolate));
     } else {
         try {
-            std::vector<void *> v;
-            strtree->_strtree.query(geom->_geom->getEnvelopeInternal(), v);
-            Local<Array> result = Array::New(isolate, v.size());
-            for (size_t i = 0; i < v.size(); i++) {
-                Local<Object> geom = Local<Object>::New(isolate, *(Persistent<Object>*)v[i]);
-                result->Set(i, geom);
-            }
+            vector<void *> geom_query_result;
+            strtree->_strtree.query(geom->_geom->getEnvelopeInternal(), geom_query_result);
+            Local<Array> result = makeQueryResult(geom_query_result);
 
             args.GetReturnValue().Set(result);
             return;
@@ -124,4 +119,18 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args)
         }
         args.GetReturnValue().Set(Undefined(isolate));
     }
+}
+
+Handle<Array> STRtree::makeQueryResult(vector<void *> geom_query_result) {
+    Isolate* isolate = Isolate::GetCurrent();
+
+    int valid_records = 0;
+    Local<Array> result = Array::New(isolate, geom_query_result.size());
+    for (vector<void*>::iterator it = geom_query_result.begin(); it != geom_query_result.end(); it++) {
+      Local<Object> geom = Local<Object>::New(isolate, *(Persistent<Object>*)(*it));
+      result->Set(valid_records, geom);
+      valid_records++;
+    }
+
+    return result;
 }

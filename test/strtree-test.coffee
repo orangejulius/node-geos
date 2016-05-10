@@ -28,5 +28,10 @@ tests = (vows.describe "STRtree").addBatch
       # this relies on the tree.insert from the last test
       assert.deepEqual tree.query(point), [polygon]
 
+    "async query for a point in a polygon should return that polygon": (tree) ->
+      # this relies on the tree.insert from the last test
+      tree.query point, (err, results) ->
+        assert.deepEqual results, [polygon]
+
 
 tests.export module
