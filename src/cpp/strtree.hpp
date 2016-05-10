@@ -17,7 +17,7 @@ class Geometry;
 class STRtree : public ObjectWrap {
  public:
     geos::index::strtree::STRtree _strtree;
-    STRtree();
+    STRtree(int nodeCapacity);
     ~STRtree();
     static void Initialize(Handle<Object> target);
 

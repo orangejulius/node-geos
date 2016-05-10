@@ -79,4 +79,21 @@ tests = (vows.describe "STRtree").addBatch
         "Cannot insert after STRtree has been built."
       )
 
+    "node capacity can be set during construction": () ->
+      tree = new STRtree(5)
+
+    "node capacity cannot be set to a negative value": () ->
+      assert.throws( ->
+        tree = new STRtree(-3)
+      )
+
+    "node capacity cannot be set to 1": () ->
+      assert.throws( ->
+        tree = new STRtree(1)
+      )
+
+    "node capacity cannot be set to 0": () ->
+      assert.throws( ->
+        tree = new STRtree(0)
+      )
 tests.export module

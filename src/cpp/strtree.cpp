@@ -2,7 +2,7 @@
 
 #include "geometry.hpp"
 
-STRtree::STRtree() : built(false) {
+STRtree::STRtree(int nodeCapacity) : _strtree(nodeCapacity), built(false) {
 }
 
 STRtree::~STRtree() {
@@ -31,9 +31,20 @@ void STRtree::Initialize(Handle<Object> target) {
 void STRtree::New(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
+    int nodeCapacity = 10; // default from GEOS
+
+    if (args.Length() > 0) {
+        nodeCapacity =args[0]->NumberValue();
+    }
+
+    if (nodeCapacity < 2) {
+        isolate->ThrowException(Exception::Error(String::NewFromUtf8(isolate, "Node capcity cannot be negative.")));
+        args.GetReturnValue().Set(Undefined(isolate));
+        return;
+    }
 
     STRtree *strtree;
-    strtree = new STRtree();
+    strtree = new STRtree(nodeCapacity);
     strtree->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
 }
