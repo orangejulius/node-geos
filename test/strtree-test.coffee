@@ -78,4 +78,21 @@ tests = (vows.describe "STRtree").addBatch
         tree.insert polygon2
       )
 
+    "node capacity can be set during construction": () ->
+      tree2 = new STRtree(5)
+
+    "node capacity cannot be set to a negative value": () ->
+      assert.throws( ->
+        tree2 = new STRtree(-3)
+      )
+
+    "node capacity cannot be set to 1": () ->
+      assert.throws( ->
+        tree2 = new STRtree(1)
+      )
+
+    "node capacity cannot be set to 0": () ->
+      assert.throws( ->
+        tree2 = new STRtree(0)
+      )
 tests.export module
