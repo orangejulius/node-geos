@@ -53,6 +53,19 @@ tests = (vows.describe "STRtree").addBatch
       # point that intersects both bboxes, but only one polygon
       assert.deepEqual tree.query(point2), [polygon2]
 
+    "query can take second parameter for metadata that is returned on intersection with geom": () ->
+      tree = new STRtree()
+      tree.insert(polygon, "foo")
+
+      assert.deepEqual tree.query(point), ["foo"]
+
+    "async query can take second parameter for metadata that is returned on intersection with geom": () ->
+      tree = new STRtree()
+      tree.insert(polygon, "foo")
+
+      tree.query point, (err, results) ->
+        assert.deepEqual results, ["foo"]
+
     "build can be called after inserting": () ->
       tree = new STRtree()
 
