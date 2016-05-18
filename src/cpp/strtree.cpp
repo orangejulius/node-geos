@@ -119,9 +119,9 @@ void STRtree::QueryAsyncComplete(uv_work_t *req, int status) {
     closure->cb.Reset();
     closure->strtree->Unref();
     closure->geom->_unref();
-    uv_unref((uv_handle_t*) req);
 
     delete closure;
+    delete req;
 }
 
 void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
@@ -137,7 +137,6 @@ void STRtree::Query(const FunctionCallbackInfo<Value>& args) {
         closure->geom = geom;
         closure->cb.Reset(isolate, Persistent<Function>(isolate, f));
         uv_work_t *req = new uv_work_t;
-        uv_ref((uv_handle_t*) req);
         req->data = closure;
         uv_queue_work(uv_default_loop(), req, QueryAsync, QueryAsyncComplete);
         strtree->Ref();
