@@ -13,6 +13,7 @@ using geos::geom::prep::PreparedGeometry;
 using geos::geom::prep::PreparedGeometryFactory;
 
 class Geometry;
+struct indexed_data;
 
 class STRtree : public ObjectWrap {
  public:
@@ -34,6 +35,7 @@ class STRtree : public ObjectWrap {
     bool built;
     static Persistent<Function> constructor;
     static Handle<Array> makeQueryResult(const STRtree* strtree, vector<void *> geom_query_result, const Geometry* query_geom);
+	vector<indexed_data*> indexed_datas;
 };
 
 #endif

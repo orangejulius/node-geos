@@ -14,6 +14,11 @@ tests = (vows.describe "Geometry").addBatch
 
     "a new instance should be an instance of Geometry": (geom) ->
       assert.instanceOf geom, Geometry
+    "a new instance can be deleted": () ->
+      reader = new WKTReader()
+      o = {}
+      o.g = reader.read "POINT(1 1)"
+      delete o.g
 
     "should have a toString function" : (geom) ->
       assert.isFunction geom.toString

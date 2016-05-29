@@ -2,16 +2,29 @@
 
 #include "geometry.hpp"
 
+#include <iostream>
+
+using namespace std;
+
 //Struct to store in GEOS STRtree with info needed after query
 struct indexed_data {
     const PreparedGeometry* prep_geom;
     Persistent<Value> * returnObject;
+    Geometry* geom;
 };
 
 STRtree::STRtree(int nodeCapacity) : _strtree(nodeCapacity), built(false) {
 }
 
 STRtree::~STRtree() {
+    cout<<"deleting STRtree"<<endl;
+    for(size_t i = 0; i< indexed_datas.size(); i++) {
+        if (indexed_datas[i]->prep_geom != NULL) {
+            delete indexed_datas[i]->prep_geom;
+        }
+        delete indexed_datas[i]->geom;
+        delete indexed_datas[i];
+    }
 }
 
 Persistent<Function> STRtree::constructor;
@@ -74,9 +87,15 @@ void STRtree::Insert(const FunctionCallbackInfo<Value>& args) {
     }
 
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-    i->prep_geom = PreparedGeometryFactory::prepare(geom->_geom);
+    i->geom = geom;
+    i->prep_geom = 0;
+    if (!i->prep_geom) {
+        i->prep_geom = PreparedGeometryFactory::prepare(i->geom->_geom);
+    }
 
     strtree->_strtree.insert(geom->_geom->getEnvelopeInternal(), i );
+
+    strtree->indexed_datas.push_back(i);
 
     args.GetReturnValue().Set(Undefined(isolate));
 }
@@ -181,6 +200,9 @@ Handle<Array> STRtree::makeQueryResult(const STRtree* strtree, vector<void *> ge
     for (vector<void*>::iterator it = geom_query_result_indices.begin(); it != geom_query_result_indices.end(); it++) {
         indexed_data* i = (indexed_data*)*it;
         Local<Value> localReturn = Local<Value>::New(isolate, *(i->returnObject));
+        if (!i->prep_geom) {
+            i->prep_geom = PreparedGeometryFactory::prepare(i->geom->_geom);
+        }
         if (i->prep_geom->intersects(query_geom->_geom)) {
             result->Set(valid_records, localReturn);
             valid_records++;

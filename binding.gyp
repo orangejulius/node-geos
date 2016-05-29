@@ -16,6 +16,7 @@
         "src/cpp/geojsonreader.cpp"
       ],
       'cflags!': [ '-fno-exceptions', '-fno-rtti' ],
+      'cflags': [ '-ggdb', '-O3' ],
       'cflags_cc!': [ '-fno-exceptions', '-fno-rtti' ],
       'conditions': [
         ['OS=="win"', {
