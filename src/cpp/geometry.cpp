@@ -1,12 +1,27 @@
 #include "geometry.hpp"
 
-Geometry::Geometry() {}
+#include <csignal>
+#include <iostream>
 
-Geometry::Geometry(geos::geom::Geometry *geom) : ObjectWrap() {
-    _geom = geom;
+using namespace std;
+
+Geometry::Geometry() : ObjectWrap() {
+	//Generate an interrupt
+	//cout<<"creating Geometry without pointer " <<endl;
+	//std::raise(SIGINT);
 }
 
-Geometry::~Geometry() {}
+Geometry::Geometry(geos::geom::Geometry *geom) : ObjectWrap(), _geom(geom) {
+	//Generate an interrupt
+	//cout<<"creating Geometry from " << _geom<<endl;
+	//std::raise(SIGINT);
+}
+
+Geometry::~Geometry() {
+	//Generate an interrupt
+	//cout<<"deleting Geometry with pointer " << _geom<< " that is used " << _geom.use_count()<< " times"<<endl;
+	//std::raise(SIGINT);
+}
 
 Persistent<Function> Geometry::constructor;
 

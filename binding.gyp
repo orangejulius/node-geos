@@ -17,6 +17,7 @@
       ],
       'cflags!': [ '-fno-exceptions', '-fno-rtti' ],
       'cflags_cc!': [ '-fno-exceptions', '-fno-rtti' ],
+      'cflags_cc': [ '-ggdb' ],
       'conditions': [
         ['OS=="win"', {
           # no Windows support yet...
