@@ -71,6 +71,6 @@ void GeometryFactory::Destroy(const FunctionCallbackInfo<Value>& args) {
 
   GeometryFactory *factory = ObjectWrap::Unwrap<GeometryFactory>(args.This());
   Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-  factory->_factory->destroyGeometry(geom->_geom);
+  factory->_factory->destroyGeometry(geom->_geom.get()); // this is probably bad
   args.GetReturnValue().Set(Undefined(isolate));
 }

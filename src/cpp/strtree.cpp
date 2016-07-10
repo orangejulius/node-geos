@@ -1,10 +1,15 @@
 #include "strtree.hpp"
 
+#include <iostream>
+
 #include "geometry.hpp"
+
+using namespace std;
 
 //Struct to store in GEOS STRtree with info needed after query
 struct indexed_data {
     const PreparedGeometry* prep_geom;
+    shared_ptr<geos::geom::Geometry> geom;
     Persistent<Value>* returnObject;
 };
 
@@ -75,7 +80,8 @@ void STRtree::Insert(const FunctionCallbackInfo<Value>& args) {
     }
 
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-    i->prep_geom = PreparedGeometryFactory::prepare(geom->_geom);
+    i->prep_geom = PreparedGeometryFactory::prepare(geom->_geom.get());
+	i->geom = geom->_geom;
 
     strtree->_strtree.insert(geom->_geom->getEnvelopeInternal(), i );
 
@@ -183,7 +189,10 @@ Handle<Array> STRtree::makeQueryResult(vector<void *> geom_query_result_indices,
     for (vector<void*>::iterator it = geom_query_result_indices.begin(); it != geom_query_result_indices.end(); it++) {
         indexed_data* i = (indexed_data*)*it;
         Local<Value> localReturn = Local<Value>::New(isolate, *(i->returnObject));
-        if (i->prep_geom->intersects(query_geom->_geom)) {
+		if (!query_geom->_geom) {
+			cout<<"invalid geom"<<endl;
+		}
+        if (i->prep_geom->intersects(query_geom->_geom.get())) {
             result->Set(valid_records, localReturn);
             valid_records++;
         }

@@ -1,11 +1,15 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
+#include <memory.h>
+
 #include <uv.h>
 #include <geos/geom/Geometry.h>
 #include <geos/util/GEOSException.h>
 #include "binding.hpp"
 #include "geojsonwriter.hpp"
+
+using std::shared_ptr;
 
 #define NODE_GEOS_UNARY_PREDICATE(cppmethod, geosmethod)                                \
     typedef struct {                                                                    \
@@ -84,7 +88,7 @@
                                                                                         \
     void Geometry::EIO_##cppmethod(uv_work_t *req) {                                    \
         geosmethod##_baton_t *closure = static_cast<geosmethod##_baton_t *>(req->data); \
-        closure->result = closure->geom->_geom->geosmethod(closure->geom2->_geom);      \
+        closure->result = closure->geom->_geom->geosmethod(closure->geom2->_geom.get());      \
     }                                                                                   \
                                                                                         \
     void Geometry::EIO_After##cppmethod(uv_work_t *req, int status) {                   \
@@ -133,7 +137,7 @@
         } else {                                                                        \
             try {                                                                       \
                 args.GetReturnValue().Set(                                              \
-                  geom->_geom->geosmethod(geom2->_geom) ? True(isolate) : False(isolate)\
+                  geom->_geom->geosmethod(geom2->_geom.get()) ? True(isolate) : False(isolate)\
                 );                                                                      \
                 return;                                                                 \
             } catch(geos::util::GEOSException exception) {                              \
@@ -157,7 +161,7 @@
     void Geometry::cppmethod(const FunctionCallbackInfo<Value>& args) {         \
         Geometry *geom = ObjectWrap::Unwrap<Geometry>(args.This());             \
         Geometry *geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());    \
-        geos::geom::Geometry* result = geom->_geom->geosmethod(geom2->_geom);   \
+        geos::geom::Geometry* result = geom->_geom->geosmethod(geom2->_geom.get());   \
         args.GetReturnValue().Set(Geometry::New(result));                       \
     }                                                                           \
 
@@ -174,7 +178,7 @@
 
 class Geometry : public ObjectWrap {
  public:
-    geos::geom::Geometry *_geom;
+    shared_ptr<geos::geom::Geometry> _geom;
     Geometry();
     Geometry(geos::geom::Geometry *geom);
     ~Geometry();

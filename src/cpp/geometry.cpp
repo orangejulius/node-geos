@@ -114,7 +114,7 @@ void Geometry::Distance(const FunctionCallbackInfo<Value>& args) {
 
     Geometry* geom = ObjectWrap::Unwrap<Geometry>(args.This());
     Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
-    args.GetReturnValue().Set(Number::New(isolate, geom->_geom->distance(geom2->_geom)));
+    args.GetReturnValue().Set(Number::New(isolate, geom->_geom->distance(geom2->_geom.get())));
 }
 
 void Geometry::IsWithinDistance(const FunctionCallbackInfo<Value>& args) {
@@ -125,7 +125,7 @@ void Geometry::IsWithinDistance(const FunctionCallbackInfo<Value>& args) {
     Geometry* geom2 = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     double distance = args[0]->NumberValue();
     args.GetReturnValue().Set(
-      geom->_geom->isWithinDistance(geom2->_geom, distance) ? True(isolate) : False(isolate)
+      geom->_geom->isWithinDistance(geom2->_geom.get(), distance) ? True(isolate) : False(isolate)
     );
 }
 
@@ -150,7 +150,7 @@ void Geometry::ToJSON(const FunctionCallbackInfo<Value>& args) {
     if (args.Length() >= 2 && args[1]->IsBoolean()) {
         writer.setBbox(args[1]->BooleanValue());
     }
-    Handle<Value> json = writer.write(geom->_geom);
+    Handle<Value> json = writer.write(geom->_geom.get());
     args.GetReturnValue().Set(json);
 }
 

@@ -42,7 +42,7 @@ void WKTWriter::Write(const FunctionCallbackInfo<Value>& args) {
     WKTWriter *writer = ObjectWrap::Unwrap<WKTWriter>(args.This());
     Geometry *geom = ObjectWrap::Unwrap<Geometry>(args[0]->ToObject());
     //TODO catch exception?
-    std::string str = writer->_writer->write(geom->_geom);
+    std::string str = writer->_writer->write(geom->_geom.get());
     args.GetReturnValue().Set(String::NewFromUtf8(isolate, str.data()));
 }
 
